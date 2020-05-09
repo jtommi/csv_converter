@@ -1,4 +1,5 @@
-[![Made with Rust](https://img.shields.io/badge/Made%20with-Rust-blue)](https://www.rust-lang.org/)
+![wip](https://img.shields.io/badge/wip-work%20in%20progress-brightgreen)
+[![made with Rust](https://img.shields.io/badge/made%20with-Rust-blue)](https://www.rust-lang.org/)
 ![Platform](https://img.shields.io/badge/platform-windows%20%7C%20linux-informational)
 [![GitHub license](https://img.shields.io/github/license/jtommi/csv_converter)](https://github.com/jtommi/csv_converter/blob/master/LICENSE)
 
