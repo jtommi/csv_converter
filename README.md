@@ -10,6 +10,11 @@ This tool helps you convert CSV files from one format to another.
 
 It is written in Rust.
 
+# Usage
+Currently the tool can only be used through the command line.  
+You have two specify thei nput file as argument 1 and the output filename as argument 2.  
+e.g. `csv_converter input.csv outpurt.csv`
+
 # Development
 ## VS Code
 This project was set up in Visual Code Studio.

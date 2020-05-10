@@ -6,3 +6,5 @@ edition = "2018"
 
 [dependencies]
 dialoguer = "0.6"
+csv = "1"
+regex = "1"

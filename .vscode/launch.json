@@ -12,14 +12,17 @@
                 "args": [
                     "build",
                     "--bin=csv_converter",
-                    "--package=csv_converter"
+                    "--package=csv_converter",
                 ],
                 "filter": {
                     "name": "csv_converter",
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": [
+                "test.csv",
+                "test_out.csv",
+            ],
             "cwd": "${workspaceFolder}"
         },
         {
