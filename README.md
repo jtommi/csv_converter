@@ -12,7 +12,7 @@ It is written in Rust.
 
 # Usage
 Currently the tool can only be used through the command line.  
-You have two specify thei nput file as argument 1 and the output filename as argument 2.  
+You have two specify the input file as argument 1 and the output filename as argument 2.  
 e.g. `csv_converter input.csv outpurt.csv`
 
 # Development
@@ -27,6 +27,6 @@ If you don't feel like using VS Code, you can of course compile and run the code
 1. Follow the [official guide](https://www.rust-lang.org/tools/install) to install Rust
 2. Open a terminal
 3. Build or run the code
-   * Build : `cargo build` 
-   * Run : `cargo run`
-   * Build optimized version for release : `cargo build --release`
+   * Build: `cargo build` 
+   * Run: `cargo run`
+   * Build optimized version for release: `cargo build --release`
