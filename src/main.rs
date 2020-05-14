@@ -1,18 +1,17 @@
 extern crate csv;
 extern crate dialoguer;
 extern crate regex;
+extern crate ropey;
 
+use ropey::Rope;
 use csv::{ReaderBuilder, WriterBuilder};
 use dialoguer::{theme::ColorfulTheme, Select};
 use regex::Regex;
 use std::env;
 use std::error::Error;
 use std::ffi::OsString;
-use std::fs::File;
-use std::fs::OpenOptions;
-use std::io;
-use std::io::prelude::*;
-use std::process;
+use std::fs::{File, OpenOptions};
+use std::io::{self, prelude::*,BufReader, BufWriter};
 use std::time::Instant;
 
 fn run() -> Result<(), Box<dyn Error>> {
@@ -42,8 +41,9 @@ fn run() -> Result<(), Box<dyn Error>> {
         Some(0) => input_column_delimiter = b',',
         Some(1) => input_column_delimiter = b';',
         Some(2) => input_column_delimiter = b'\t',
-        Some(_) => nice_exit(),
-        None => nice_exit(),
+        _ => {
+            nice_exit()?;
+        },
     }
 
     let re_period = Regex::new(r"^(\d+)\.(\d+)$").unwrap();
@@ -59,13 +59,9 @@ fn run() -> Result<(), Box<dyn Error>> {
     match decimal_format_input_selection {
         Some(0) => re = re_period,
         Some(1) => re = re_comma,
-        Some(_) => {
+        _ => {
             re = Regex::new(r"").unwrap();
-            nice_exit();
-        }
-        None => {
-            re = Regex::new(r"").unwrap();
-            nice_exit();
+            nice_exit()?;
         }
     }
 
@@ -80,8 +76,9 @@ fn run() -> Result<(), Box<dyn Error>> {
         Some(0) => output_column_delimiter = b',',
         Some(1) => output_column_delimiter = b';',
         Some(2) => output_column_delimiter = b'\t',
-        Some(_) => nice_exit(),
-        None => nice_exit(),
+        _ => {
+            nice_exit()?;
+        },
     }
 
     let replace_with;
@@ -94,13 +91,9 @@ fn run() -> Result<(), Box<dyn Error>> {
     match decimal_format_output_selection {
         Some(0) => replace_with = ".",
         Some(1) => replace_with = ",",
-        Some(_) => {
+        _ => {
             replace_with = "";
-            nice_exit();
-        }
-        None => {
-            replace_with = "";
-            nice_exit();
+            nice_exit()?;
         }
     }
 
@@ -113,33 +106,19 @@ fn run() -> Result<(), Box<dyn Error>> {
         .open(output_file_path)
         .unwrap();
 
-    let rdr = ReaderBuilder::new()
-        .delimiter(input_column_delimiter)
-        .has_headers(false)
-        .from_reader(&input_file);
+    let text = Rope::from_reader(
+        BufReader::new(File::open(&input_file_path)?)
+    )?;
+    
+    let mut lines = text.lines();
+    while let Some(s) = lines.next(){
+        print!("{}",s);
+    };
+    
+    /* text.write_to(
+        BufWriter::new(File::create(&output_file_path)?)
+    )?; */
 
-    let mut wtr = WriterBuilder::new()
-        .delimiter(output_column_delimiter)
-        .has_headers(false)
-        .from_writer(&output_file);
-
-    let formatted_replace = format!("$1{}$2", replace_with);
-    for record in rdr.into_records() {
-        let result = record?;
-        if result.len() == 1 {
-            println!("The tool only recognised one column in your file.");
-            println!("The file is probably bad or you chose the wrong input delimiter");
-            break;
-        }
-        for field in result.iter() {
-            let replaced_field = re.replace_all(&field, formatted_replace.as_str());
-            wtr.write_field(replaced_field.as_ref())?;
-        }
-        wtr.write_record(None::<&[u8]>)?;
-        wtr.flush()?;
-    }
-
-    wtr.flush()?;
     println!(
         "Duration of the conversion: {} seconds",
         now.elapsed().as_millis()/1000
@@ -152,7 +131,7 @@ fn main() {
     if let Err(err) = run() {
         println!("{}", err);
     }
-    nice_exit();
+    Some(nice_exit());
 }
 
 /// Returns the first positional argument sent to this process. If there are no
@@ -176,11 +155,11 @@ fn exit_pause() {
     let _ = stdin.read(&mut [0u8]).unwrap();
 }
 
-fn nice_exit() {
+fn nice_exit() -> Result<(), Box<dyn Error>> {
     println!("");
     println!("Thanks for using this software.");
     exit_pause();
-    process::exit(0);
+    Ok(())
 }
 
 fn greeting() {

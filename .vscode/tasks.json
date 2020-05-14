@@ -19,12 +19,27 @@
             "args": [
                 "run",
                 "test.csv",
-                "test_out.csv",
+                "test_out.csv"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "rust: cargo run small",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "run",
+                "test_small.csv",
+                "test_out.csv"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
         },
         {
             "label": "rust: cargo build release",
